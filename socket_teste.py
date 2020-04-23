@@ -6,6 +6,8 @@ import numpy as np
 import os
 import time
 
+print('Started running')
+last_attack = time.time()
 _connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 _connection.bind(('10.0.0.116', 4445))
 _connection.listen(1)
@@ -24,18 +26,23 @@ while True:
 	cv.waitKey(1)
 	
 	hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
-	lower_range = np.array([110,140,160])
+	lower_range = np.array([100,250,100])
 	upper_range = np.array([130,255,255])
 	mask = cv.inRange(hsv, lower_range, upper_range)
 	try:
 		coord = cv.findNonZero(mask)
 		x, y = coord[50][0]
 	except:
+		if time.time() > last_attack + 6:
+			os.system('vncdotool -s localhost key f2 click 1')
+			last_attack = time.time()
+			continue
 		# print('Elapsed - {}'.format(time.time() - start))
 		continue
 	os.system('vncdotool -s localhost move {} {} click 1'.format(x, y))
 	os.system('echo mouse_button {}|nc -N 127.0.0.1 4444 > /dev/null 2'.format(1))
 	time.sleep(0.2)
 	os.system('echo mouse_button {}|nc -N 127.0.0.1 4444 > /dev/null 2'.format(0))
-	time.sleep(3)
-	# print('Elapsed - {}'.format(time.time() - start))
+	time.sleep(3.5)
+	last_attack = time.time()
+	print('Elapsed - {}'.format(time.time() - last_attack))
