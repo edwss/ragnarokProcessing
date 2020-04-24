@@ -20,7 +20,7 @@ class Process:
             self.names.append(name)
         else:
             self.process.append(subprocess.Popen('su eduardo', stdout=subprocess.PIPE, stdin=subprocess.PIPE, shell=True, preexec_fn=os.setsid,cwd=cwd))
-            self.process[-1].stdin.write('source env/bin/activate\n'.encode('utf-8'))
+            self.process[-1].stdin.write('source env_3/bin/activate\n'.encode('utf-8'))
             command_string = '{} &\n'.format(command)
             self.process[-1].stdin.write(command_string.encode('utf-8'))
             self.process[-1].stdin.close()

@@ -2,7 +2,7 @@ import Process
 
 processController = Process.Process()
 processController.add('./virtualmachine.sh 5900 01 machine-1  4444', 'VirtualMachine_1', '.', 'True')
-processController.add('python socket_server.py 6000 5900 4444', 'Engine_1', '.')
+processController.add('python server.py 5556 5900 4444', 'Engine_1', '.')
 
 while True:
     command = input().split(' ')
