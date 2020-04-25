@@ -1,8 +1,23 @@
 import Process
+import pika
+from pickle import dumps
+import time
 
 processController = Process.Process()
-processController.add('./virtualmachine.sh 5900 01 machine-1  4444', 'VirtualMachine_1', '.', 'True')
-processController.add('python server.py 5556 5900 4444', 'Engine_1', '.')
+processController.add('./machine-disk/virtualmachine.sh Rabbit 6000 10 rabbit  4400', 'Rabbit', '.', 'True', '')
+# processController.add('./machine-disk/virtualmachine.sh Merchant 5900 01 merchant  4444', 'Merchant', '.', 'True', 'Robot.Merchant')
+processController.add('./machine-disk/virtualmachine.sh VirtualMachine_1 5901 02 machine-1  4445', 'VirtualMachine_1', '.', 'True', 'Robot.')
+time.sleep(60)
+
+
+credentials = pika.PlainCredentials('eduardo', 'edu12309')
+connection = pika.BlockingConnection(pika.ConnectionParameters(host='10.0.0.112', credentials=credentials))
+channel = connection.channel()
+channel.queue_declare(queue='Machines')
+channel.basic_publish(exchange='',routing_key='Machines',body=dumps(processController.getPorts()))
+connection.close()
+
+processController.add('python Server.py 5556', 'Engine_1', '.')
 
 while True:
     command = input().split(' ')
