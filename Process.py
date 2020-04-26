@@ -27,6 +27,8 @@ class Process:
             dict_['qemu_port'] =  command.split(' ')[-1]
             if bot_name:
                 dict_['bot_name'] = bot_name
+            else:
+                dict_['bot_name'] = 'null'
             self.ports.append(dict_)
         else:
             self.process.append(subprocess.Popen('su eduardo', stdout=subprocess.PIPE, stdin=subprocess.PIPE, shell=True, preexec_fn=os.setsid,cwd=cwd))
