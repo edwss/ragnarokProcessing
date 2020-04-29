@@ -104,7 +104,7 @@ def checkWings(image, bot_name):
             if machine['bot_name'] == bot_name:
                 machine['elapsed_time'] = time.time()
         return 1
-    cv.imwrite('logs/{}_{}.jpg'.format(time.strftime("%m/%d/%Y, %H:%M:%S", time.localtime()), bot_name), image)
+    cv.imwrite('logs/{}_{}.jpg'.format(time.strftime("%m-%d-%Y,%H-%M-%S", time.localtime()), bot_name), image)
     setMerchantChannel(bot_name)
     time.sleep(90)
     script_file('get_wings', bot_name, 'Robot.Merchant')
