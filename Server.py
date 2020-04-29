@@ -38,7 +38,7 @@ def main():
                     except:
                         machine['elapsed_time'] = time.time()
 
-            if time.time() > machine['elapsed_time'] + 60:
+            if time.time() > machine['elapsed_time'] + 100:
                 #Thread to search for fly wing
                 if thread_check.is_alive():
                     pass
@@ -50,7 +50,7 @@ def main():
                 if thread.is_alive():
                     pass
                 else:
-                    thread = threading.Thread(target=Functions.searchMonster, args=(image, vnc_port, qemu_port))
+                    thread = threading.Thread(target=Functions.searchDistance, args=(image, vnc_port, qemu_port))
                     thread.start()    
 
 

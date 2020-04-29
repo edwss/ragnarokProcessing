@@ -4,6 +4,7 @@ import numpy as np
 import time
 import os
 from pickle import loads,dumps
+import math
 
 last_attack = time.time()
 machines = ''
@@ -27,6 +28,34 @@ def searchMonster(img, vnc_port, qemu_port):
     time.sleep(0.2)
     os.system('echo mouse_button {}|nc -N 127.0.0.1 {} > /dev/null 2'.format(0, qemu_port))
     time.sleep(3.5)
+    last_attack = time.time()
+
+def searchDistance(img, vnc_port, qemu_port):
+    global last_attack
+    hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    lower_range = np.array([100,250,100])
+    upper_range = np.array([130,255,255])
+    mask = cv.inRange(hsv, lower_range, upper_range)
+    try:
+        coord = cv.findNonZero(mask)
+        distance = 1000
+        origin = (407, 305)
+        for pixel in coord:
+            x,y = pixel[0]
+            distance_teste = math.sqrt(((origin[0]-x)**2)+((origin[1]-y)**2))
+            if distance > distance_teste:
+                click_point = (x,y)
+                distance = distance_teste
+    except:
+        if time.time() > last_attack + 6:
+            os.system('env/env_python2.7/bin/vncdotool -s localhost:{} key f2 click 1'.format(vnc_port))
+            last_attack = time.time()
+        return
+    os.system('env/env_python2.7/bin/vncdotool -s localhost:{} move {} {} click 1'.format(vnc_port ,click_point[0], click_point[1]))
+    os.system('echo mouse_button {}|nc -N 127.0.0.1 {} > /dev/null 2'.format(1, qemu_port))
+    time.sleep(0.2)
+    os.system('echo mouse_button {}|nc -N 127.0.0.1 {} > /dev/null 2'.format(0, qemu_port))
+    time.sleep(3)
     last_attack = time.time()
 
 
@@ -75,8 +104,9 @@ def checkWings(image, bot_name):
             if machine['bot_name'] == bot_name:
                 machine['elapsed_time'] = time.time()
         return 1
+    cv.imwrite('logs/{}_{}.jpg'.format(time.strftime("%m/%d/%Y, %H:%M:%S", time.localtime()), bot_name), image)
     setMerchantChannel(bot_name)
-    time.sleep(60)
+    time.sleep(90)
     script_file('get_wings', bot_name, 'Robot.Merchant')
     for machine in machines:
         if machine['bot_name'] == bot_name:
@@ -119,4 +149,4 @@ def listenMerchant():
         result = getMerchantChannel()
         if result !=  '':
             script_file('clicks', 'Robot.Merchant', request=result.decode('utf-8'))
-        time.sleep(30)
+        time.sleep(20)
