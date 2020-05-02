@@ -4,9 +4,10 @@ from pickle import dumps
 import time
 
 processController = Process.Process()
-processController.add('./machine-disk/virtualmachine.sh Rabbit 6000 10 rabbit  4400', 'Rabbit', '.', 'True', '')
-processController.add('./machine-disk/virtualmachine.sh Merchant 5900 01 merchant  4444', 'Merchant', '.', 'True', 'Robot.Merchant')
-processController.add('./machine-disk/virtualmachine.sh VirtualMachine_1 5901 02 machine-1  4445', 'VirtualMachine_1', '.', 'True', 'Robot.')
+processController.add('./machine-disk/virtualmachine.sh Rabbit 2 10 rabbit  4400', 'Rabbit', '.', 'True', '')
+processController.add('./machine-disk/virtualmachine.sh Merchant 0 01 merchant  4444', 'Merchant', '.', 'True', 'Robot.Merchant')
+processController.add('./machine-disk/virtualmachine.sh VirtualMachine_1 1 02 machine-1  4445', 'VirtualMachine_1', '.', 'True', 'Robot.')
+processController.add('./machine-disk/virtualmachine.sh VirtualMachine_2 3 03 machine-2  4446', 'VirtualMachine_2', '.', 'True', 'Robot.1')
 time.sleep(60)
 
 
