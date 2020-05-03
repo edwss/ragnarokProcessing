@@ -4,9 +4,9 @@ from pickle import dumps
 import time
 import threading
 import subprocess
+import WebServer
 
 processController = Process.Process()
-# processController.add('./machine-disk/virtualmachine.sh Rabbit 1 2 10 rabbit  4400', 'Rabbit', '.', 'True', '')
 processController.add('./machine-disk/virtualmachine.sh Merchant 3 0 01 merchant  4444', 'Merchant', '.', 'True', 'Robot.Merchant')
 processController.add('./machine-disk/virtualmachine.sh VirtualMachine_1 3 1 02 machine-1  4445', 'VirtualMachine_1', '.', 'True', 'Robot.')
 processController.add('./machine-disk/virtualmachine.sh VirtualMachine_2 3 3 03 machine-2  4446', 'VirtualMachine_2', '.', 'True', 'Robot.1')
@@ -14,6 +14,9 @@ processController.add('./machine-disk/virtualmachine.sh VirtualMachine_2 3 3 03 
 Server.Functions.machines = processController.getPorts()
 Server.socket_port = 5556
 threading.Thread(target=Server.main, args=()).start()
+
+webServer = threading.Thread(target=WebServer.main).start()
+WebServer.machines = Server.Functions.machines
 
 try:
     while True:

@@ -1,4 +1,3 @@
-import pika
 import cv2 as cv
 import numpy as np
 import time
@@ -54,9 +53,12 @@ def searchDistance(img, bot_name):
                     os.system('/bin/su -c "{}/env/env_python2.7/bin/vncdotool -s localhost:{} key f2 click 1" - eduardo'.format(os.getcwd(),vnc_port))
                     machine['last_attack'] = time.time()
         return
-    image = cv.line(img, origin, (click_point[1],click_point[0]), (0,255,0), 1)
+    if click_point[1] > 54 and click_point[1] < 66:
+        if click_point[0] < 220:
+            return 
     for machine in machines:
         if machine['bot_name'] == bot_name:
+            # machine['frame'] = cv.line(img, origin, (click_point[1],click_point[0]), (0,255,0), 1)
             vnc_port = machine['vnc_port']
             qemu_port = machine['qemu_port']
             os.system('/bin/su -c "{}/env/env_python2.7/bin/vncdotool -s localhost:{} move {} {} click 1" - eduardo'.format(os.getcwd(),vnc_port ,click_point[0], click_point[1]))
@@ -104,23 +106,24 @@ def setMerchantChannel(bot_name):
 def checkWings(image, bot_name):
     img_asa = cv.imread('tests/asa_de_mosca.png',0)
     img_gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-    w, h = img_asa.shape[::-1]
-    res = cv.matchTemplate(img_gray,img_asa,cv.TM_CCOEFF_NORMED)
-    threshold = 0.6
-    loc = np.where(res >= threshold)
-    for pt in zip(*loc[::-1]):
+    if cv.countNonZero(img_gray) != 0:
+        w, h = img_asa.shape[::-1]
+        res = cv.matchTemplate(img_gray,img_asa,cv.TM_CCOEFF_NORMED)
+        threshold = 0.6
+        loc = np.where(res >= threshold)
+        for pt in zip(*loc[::-1]):
+            for machine in machines:
+                if machine['bot_name'] == bot_name:
+                    machine['elapsed_time'] = time.time()
+            return 1
+        cv.imwrite('static/{}_{}.jpg'.format(time.strftime("%m-%d-%Y,%H-%M-%S", time.localtime()), bot_name), image)
+        #setMerchantChannel(bot_name)
+        script_file('clicks', 'Robot.Merchant', request=bot_name)
+        #time.sleep(90)
+        script_file('get_wings', bot_name, 'Robot.Merchant')
         for machine in machines:
             if machine['bot_name'] == bot_name:
                 machine['elapsed_time'] = time.time()
-        return 1
-    cv.imwrite('logs/{}_{}.jpg'.format(time.strftime("%m-%d-%Y,%H-%M-%S", time.localtime()), bot_name), image)
-    #setMerchantChannel(bot_name)
-    script_file('clicks', 'Robot.Merchant', request=bot_name)
-    #time.sleep(90)
-    script_file('get_wings', bot_name, 'Robot.Merchant')
-    for machine in machines:
-        if machine['bot_name'] == bot_name:
-            machine['elapsed_time'] = time.time()
 
 
 def script_file(script_name, bot_name, request = ''):

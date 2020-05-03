@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <title>Running Bots</title>
+  </head>
+  <body>
+    {% for bot in bots %}
+      {% if bot.bot_name != 'Robot.Merchant' %}
+      <div style="display:inline"></div>
+        <h4>{{ bot.bot_name }}</h4>
+        <img style="width: 400px; height: 300px; display:inline;" src="{{ url_for('video_feed', bot=bot.bot_name) }}">
+        {% if logs %}
+          {% for log in logs %}
+            {% if log.bot_name == bot.bot_name %}
+            <img style="width: 100px; height: 100px; display:inline;" src="static/{{ log.directory }}">
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
+      {% endif %}
+    {% endfor %}
+  </body>
+</html>

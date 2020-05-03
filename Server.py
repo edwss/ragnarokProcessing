@@ -1,8 +1,8 @@
-import imagezmq
 import threading
 import Functions
 import time
 import sys
+import imagezmq
 from pickle import loads
 
 Functions.last_attack = time.time()
@@ -15,17 +15,17 @@ def main():
         machine['wings_thread'] = threading.Thread()
         machine['elapsed_time'] = time.time()
         machine['last_attack'] = time.time()
+        machine['frame'] = ''
 
     image_hub = imagezmq.ImageHub(open_port='tcp://*:{}'.format(socket_port))
-    print(Functions.machines)
     while True:
         try:
             machine_name, image = image_hub.recv_image()
             image_hub.send_reply(b'OK')
-
             for machine in Functions.machines:
                 if machine['name'] == machine_name:
                     bot_name = machine['bot_name']
+                    machine['frame'] = image
                     if time.time() > machine['elapsed_time'] + 100:
                         #Thread to search for fly wing
                         if machine['wings_thread'].is_alive():
