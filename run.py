@@ -1,28 +1,22 @@
 import Process
-import pika
+import Server
 from pickle import dumps
 import time
+import threading
+import subprocess
 
 processController = Process.Process()
-processController.add('./machine-disk/virtualmachine.sh Rabbit 2 10 rabbit  4400', 'Rabbit', '.', 'True', '')
-processController.add('./machine-disk/virtualmachine.sh Merchant 0 01 merchant  4444', 'Merchant', '.', 'True', 'Robot.Merchant')
-processController.add('./machine-disk/virtualmachine.sh VirtualMachine_1 1 02 machine-1  4445', 'VirtualMachine_1', '.', 'True', 'Robot.')
-processController.add('./machine-disk/virtualmachine.sh VirtualMachine_2 3 03 machine-2  4446', 'VirtualMachine_2', '.', 'True', 'Robot.1')
-time.sleep(60)
+# processController.add('./machine-disk/virtualmachine.sh Rabbit 1 2 10 rabbit  4400', 'Rabbit', '.', 'True', '')
+processController.add('./machine-disk/virtualmachine.sh Merchant 3 0 01 merchant  4444', 'Merchant', '.', 'True', 'Robot.Merchant')
+processController.add('./machine-disk/virtualmachine.sh VirtualMachine_1 3 1 02 machine-1  4445', 'VirtualMachine_1', '.', 'True', 'Robot.')
+processController.add('./machine-disk/virtualmachine.sh VirtualMachine_2 3 3 03 machine-2  4446', 'VirtualMachine_2', '.', 'True', 'Robot.1')
 
-
-credentials = pika.PlainCredentials('eduardo', 'edu12309')
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='10.0.0.112', credentials=credentials))
-channel = connection.channel()
-channel.queue_declare(queue='Machines')
-channel.basic_publish(exchange='',routing_key='Machines',body=dumps(processController.getPorts()))
-connection.close()
-
-processController.add('python Server.py 5556', 'Engine_1', '.')
+Server.Functions.machines = processController.getPorts()
+Server.socket_port = 5556
+threading.Thread(target=Server.main, args=()).start()
 
 try:
     while True:
-        
             command = input().split(' ')
 
             if command[0] == 'list':
@@ -41,5 +35,14 @@ try:
                 command_string = " ".join(command[3:])
                 processController.add(command_string, command_name, command_pwd)
                 print('Process added {} : {}'.format(command_name, command_string))
+
+            if command[0] == 'machines':
+                print(Server.Functions.machines)
+
+            if command[0] == 'script':
+                Server.Functions.script_file('clicks', 'Robot.Merchant', request='Robot.')
+                Server.Functions.script_file('get_wings', 'Robot.', 'Robot.Merchant')
+
 except KeyboardInterrupt:
     processController.killAll()
+    exit(0)

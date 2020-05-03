@@ -7,12 +7,9 @@ from pickle import loads
 
 Functions.last_attack = time.time()
 image_hub = imagezmq.ImageHub()
-threading.Thread(target=Functions.listenMerchant, args=()).start()
+socket_port = ''
 
 def main():
-    socket_port = int(sys.argv[1])
-    Functions.machines = loads(Functions.getMachineConfig())
-    #Inicializating parameters
     for machine in Functions.machines:
         machine['search_thread'] = threading.Thread()
         machine['wings_thread'] = threading.Thread()
@@ -20,9 +17,8 @@ def main():
         machine['last_attack'] = time.time()
 
     image_hub = imagezmq.ImageHub(open_port='tcp://*:{}'.format(socket_port))
-
+    print(Functions.machines)
     while True:
-      
         try:
             machine_name, image = image_hub.recv_image()
             image_hub.send_reply(b'OK')
@@ -47,9 +43,3 @@ def main():
 
         except Exception as e:
             print(e)
-
-if __name__ == '__main__':
-    try:
-        main()
-    except Exception as e:
-        print(e)

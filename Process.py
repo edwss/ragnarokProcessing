@@ -23,7 +23,7 @@ class Process:
             self.names.append(name)
             dict_ = {}
             dict_['name'] = name
-            dict_['vnc_port'] = command.split(' ')[2]
+            dict_['vnc_port'] = command.split(' ')[3]
             dict_['qemu_port'] =  command.split(' ')[-1]
             if bot_name:
                 dict_['bot_name'] = bot_name

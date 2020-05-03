@@ -51,14 +51,15 @@ def searchDistance(img, bot_name):
                 vnc_port = machine['vnc_port']
                 qemu_port = machine['qemu_port']
                 if time.time() > machine['last_attack'] + 4:
-                    os.system('env/env_python2.7/bin/vncdotool -s localhost:{} key f2 click 1'.format(vnc_port))
+                    os.system('/bin/su -c "{}/env/env_python2.7/bin/vncdotool -s localhost:{} key f2 click 1" - eduardo'.format(os.getcwd(),vnc_port))
                     machine['last_attack'] = time.time()
         return
+    image = cv.line(img, origin, (click_point[1],click_point[0]), (0,255,0), 1)
     for machine in machines:
         if machine['bot_name'] == bot_name:
             vnc_port = machine['vnc_port']
             qemu_port = machine['qemu_port']
-            os.system('env/env_python2.7/bin/vncdotool -s localhost:{} move {} {} click 1'.format(vnc_port ,click_point[0], click_point[1]))
+            os.system('/bin/su -c "{}/env/env_python2.7/bin/vncdotool -s localhost:{} move {} {} click 1" - eduardo'.format(os.getcwd(),vnc_port ,click_point[0], click_point[1]))
             os.system('echo mouse_button {}|nc -N 127.0.0.1 {} > /dev/null 2'.format(1, qemu_port))
             time.sleep(0.2)
             os.system('echo mouse_button {}|nc -N 127.0.0.1 {} > /dev/null 2'.format(0, qemu_port))
@@ -143,13 +144,13 @@ def script_file(script_name, bot_name, request = ''):
             else:
                 if '{}' in command:
                     command = '{} {}'.format(command[:-4], request)
-                    os.system('env/env_python2.7/bin/vncdotool -s localhost:{} {}'.format(vnc_port, command))
+                    os.system('/bin/su -c "{}/env/env_python2.7/bin/vncdotool -s localhost:{} {}" - eduardo'.format(os.getcwd(),vnc_port, command))
                 else:
                     if 'mouse_button' in command:
                         os.system('echo {} |nc -N 127.0.0.1 {} > /dev/null 2'.format(command[:-1], qemu_port))
                         time.sleep(0.2)
                     else:
-                        os.system('env/env_python2.7/bin/vncdotool -s localhost:{} {}'.format(vnc_port, command[:-1]))
+                        os.system('/bin/su -c "{}/env/env_python2.7/bin/vncdotool -s localhost:{} {}" - eduardo'.format(os.getcwd(),vnc_port, command[:-1]))
                         time.sleep(0.3)
 
 
