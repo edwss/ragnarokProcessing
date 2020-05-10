@@ -72,5 +72,5 @@ def getLogs():
 # check to see if this is the main thread of execution
 def main():
 	# start the flask app
-	app.run(host='10.0.0.116', port=5000, debug=True,
+	app.run(host='10.0.0.106', port=5000, debug=True,
 		threaded=True, use_reloader=False)

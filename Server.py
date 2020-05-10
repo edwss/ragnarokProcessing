@@ -4,7 +4,9 @@ import time
 import sys
 import imagezmq
 from pickle import loads
+import logging
 
+logging.basicConfig(level=logging.INFO)
 Functions.last_attack = time.time()
 image_hub = imagezmq.ImageHub()
 socket_port = ''
@@ -26,7 +28,7 @@ def main():
                 if machine['name'] == machine_name:
                     bot_name = machine['bot_name']
                     machine['frame'] = image
-                    if time.time() > machine['elapsed_time'] + 100:
+                    if time.time() > machine['elapsed_time'] + 180:
                         #Thread to search for fly wing
                         if machine['wings_thread'].is_alive():
                             pass
@@ -42,4 +44,4 @@ def main():
                             machine['search_thread'].start()
 
         except Exception as e:
-            print(e)
+            logging.warning(e)
