@@ -8,7 +8,6 @@ import logging
 
 machines = ''
 
-#!TODO Even with exit the function is reaching the click call and is getting error resulting in a stop on bot
 def searchDistance(img, bot_name):
     hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
     lower_range = np.array([100,250,100])
@@ -24,14 +23,14 @@ def searchDistance(img, bot_name):
                 click_point = coord[i][0]
                 distance = distance_teste
 
-        if click_point[0] > 400:
+        if click_point[0] > 407:
             click_point[0] = click_point[0] + 5
-        else:
+        if click_point[0] < 390:
             click_point[0] = click_point[0] - 5
 
-        if click_point[1] > 300:
+        if click_point[1] > 305:
                 click_point[1] = click_point[1] + 10
-        else:
+        if click_point[1] < 290:
             click_point[1] = click_point[1] - 10
 
         if click_point[1] > 54 and click_point[1] < 66:
@@ -40,7 +39,7 @@ def searchDistance(img, bot_name):
 
         for machine in machines:
             if machine['bot_name'] == bot_name:
-                logging.info('Clicking on {}'.format(bot_name))
+                logging.debug('Clicking on {}'.format(bot_name))
                 vnc_port = machine['vnc_port']
                 qemu_port = machine['qemu_port']
                 if 'click_point' in locals():
@@ -73,6 +72,17 @@ def checkWings(image, bot_name):
             if machine['bot_name'] == bot_name:
                 machine['elapsed_time'] = time.time()
                 exit(0)
+
+    #Check if there is another thread alive requesting wings
+    for machine in machines:
+        if machine['bot_name'] == bot_name:
+            pass
+        else:
+            if machine['wings_thread'].is_alive():
+                time.sleep(5)
+                exit(0)
+
+    cv.imwrite('static/{}_{}.jpg'.format(time.strftime("%m-%d-%Y,%H-%M-%S", time.localtime()), bot_name), image)
     script_file('clicks', 'Robot.Merchant', request=bot_name)
     logging.info('Sended wings to {}'.format(bot_name))
     time.sleep(10)
@@ -104,11 +114,11 @@ def script_file(script_name, bot_name, request = ''):
             else:
                 if '{}' in command:
                     command = '{} {}'.format(command[:-4], request)
-                    os.system('/bin/su -c "/home/eduardo/Projects/ragnarok/env/env2.7/bin/vncdotool -t 0.5 -s localhost:{} {}" - eduardo'.format(os.getcwd(),vnc_port, command))
+                    os.system('/bin/su -c "/home/eduardo/Projects/ragnarok/env/env2.7/bin/vncdotool -t 0.5 -s localhost:{} {}" - eduardo'.format(vnc_port, command))
                 else:
                     if 'mouse_button' in command:
                         os.system('echo {} |nc -N 127.0.0.1 {} > /dev/null 2'.format(command[:-1], qemu_port))
                         time.sleep(0.2)
                     else:
-                        os.system('/bin/su -c "{}/env/env2.7/bin/vncdotool -t 0.5 -s localhost:{} {}" - eduardo'.format(os.getcwd(),vnc_port, command[:-1]))
+                        os.system('/bin/su -c "/home/eduardo/Projects/ragnarok/env/env2.7/bin/vncdotool -t 0.5 -s localhost:{} {}" - eduardo'.format(vnc_port, command[:-1]))
                         time.sleep(0.3)
