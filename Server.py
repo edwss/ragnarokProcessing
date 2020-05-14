@@ -42,6 +42,5 @@ def main():
                         else:
                             machine['search_thread'] = threading.Thread(target=Functions.searchDistance, args=(image, bot_name))
                             machine['search_thread'].start()
-
         except Exception as e:
             logging.warning(e)

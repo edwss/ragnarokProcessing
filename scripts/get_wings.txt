@@ -1,48 +1,15 @@
-[Abrir menu,move 110 60]
-[QEMU Click,mouse_button 1]
-[QEMU Click,mouse_button 0]
-[Icone rodex,move 150 180]
-[QEMU Click,mouse_button 1]
-[QEMU Click,mouse_button 0]
-[wait,2]
-[Receber tudo,move 300 530]
-[QEMU Click,mouse_button 1]
-[QEMU Click,mouse_button 0]
-[wait,2]
-[Aceitar receber tudo,move 470 345]
-[QEMU Click,mouse_button 1]
-[QEMU Click,mouse_button 0]
-[wait,2]
-[Escrever mensagem,move 470 160]
-[QEMU Click,mouse_button 1]
-[QEMU Click,mouse_button 0]
-[wait,2]
-[QEMU Click,mouse_button 1]
-[QEMU Click,mouse_button 0]
-[wait,2]
-[Name player,move 230 185]
-[QEMU Click,mouse_button 1]
-[QEMU Click,mouse_button 0]
-[wait,2]
-[Write player name,type {}]
-[Check player,move 400 185]
-[QEMU Click,mouse_button 1]
-[QEMU Click,mouse_button 0]
-[Open inventory,move 110 90]
-[QEMU Click,mouse_button 1]
-[QEMU Click,mouse_button 0]
-[wait,2]
-[Enviar Morango,move 120 153]
-[QEMU Drag,mouse_button 1]
-[Place in message,move 381 471]
-[QEMU Drag,mouse_button 0]
-[Send All,key enter]
-[Send message,move 459 535]
-[QEMU Click,mouse_button 1]
-[QEMU Click,mouse_button 0]
-[Send,key esc]
-[wait,2]
-[Send,key esc]
-[Fechar menu,move 110 60]
-[QEMU Click,mouse_button 1]
-[QEMU Click,mouse_button 0]
+click 110 60
+click 150 180
+click 300 530
+click 470 345
+click 470 160
+click 230 185
+type {}
+click 400 185
+click 110 90
+drag 120 153 381 471
+key enter
+click 459 535
+key esc
+key esc
+click 110 60

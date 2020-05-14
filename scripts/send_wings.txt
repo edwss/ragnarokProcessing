@@ -1,0 +1,19 @@
+click 614 173
+click 430 478
+drag 54 252 337 310
+type 300
+key enter
+click 481 416
+click 150 180
+click 470 160
+click 470 160
+click 230 185
+type {}
+click 400 185
+click 110 90
+drag 59 157 379 470
+type 300
+key enter
+click 458 536
+key esc
+key esc
