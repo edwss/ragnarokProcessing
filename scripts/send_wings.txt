@@ -1,19 +1,38 @@
+sendkey insert
+wait 1
+sendkey shift-f11
+wait 1
 click 614 173
+wait 0.5
 click 430 478
+wait 0.5
 drag 54 252 337 310
 type 300
 key enter
 click 481 416
+wait 0.5
 click 150 180
+wait 0.5
 click 470 160
+wait 0.5
 click 470 160
+wait 0.5
 click 230 185
+wait 0.5
+click 230 185
+wait 0.5
 type {}
 click 400 185
+wait 0.5
 click 110 90
+wait 0.5
 drag 59 157 379 470
+wait 0.5
 type 300
+wait 0.5
 key enter
+wait 0.5
 click 458 536
+wait 0.5
 key esc
 key esc

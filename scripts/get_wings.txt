@@ -1,15 +1,35 @@
+wait 1
 click 110 60
+wait 1
 click 150 180
-click 300 530
-click 470 345
+wait 1
 click 470 160
+wait 1
 click 230 185
+wait 0.5
+click 230 185
+wait 0.5
+wait 1
 type {}
 click 400 185
+wait 0.5
 click 110 90
+wait 0.5
 drag 120 153 381 471
-key enter
-click 459 535
-key esc
-key esc
+wait 0.5
+sendkey kp_enter 500
+wait 0.5
+click 458 536
+wait 0.5
+click 300 530
+wait 1
+click 470 345
+wait 1
+sendkey esc
+sendkey esc
 click 110 60
+sendkey meta_r-r 500
+wait 1
+sendkey kp_enter 500
+wait 1
+sendkey alt-tab 500

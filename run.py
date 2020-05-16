@@ -14,8 +14,8 @@ processController.add('./machine-disk/virtualmachine.sh VirtualMachine_2 3 2 03 
 Server.Functions.machines = processController.getPorts()
 Server.socket_port = 5556
 threading.Thread(target=Server.main, args=()).start()
-webServer = threading.Thread(target=WebServer.main).start()
-WebServer.machines = Server.Functions.machines
+# webServer = threading.Thread(target=WebServer.main).start()
+# WebServer.machines = Server.Functions.machines
 
 try:
     while True:
@@ -42,8 +42,12 @@ try:
                 print(Server.Functions.machines)
 
             if command[0] == 'script':
-                Server.Functions.script_file('send_wings', 'Robot.Merchant', request='Robot.')
-                Server.Functions.script_file('get_wings', 'Robot.', 'Robot.Merchant')
+                pass
+                #  Server.Functions.normalCommand(1, 4445, 'key enter')
+                # Server.Functions.script_file('relog', 'Robot.Merchant')
+                # Server.Functions.script_file('send_wings', 'Robot.Merchant', 'Robot.')
+                # Server.Functions.script_file('relog', 'Robot.')
+                # Server.Functions.script_file('get_wings', 'Robot.', 'Robot.Merchant')
 except KeyboardInterrupt:
     processController.killAll()
     exit(0)

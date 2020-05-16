@@ -29,6 +29,11 @@ class Process:
                 dict_['bot_name'] = bot_name
             else:
                 dict_['bot_name'] = 'null'
+            with open('credentials/' + bot_name, 'r') as file:
+                line = file.readlines()
+                file.close()
+            dict_['bot_user'] = line[0][:-1]
+            dict_['bot_password'] = line[1][:-1]
             self.ports.append(dict_)
         else:
             self.process.append(subprocess.Popen('su eduardo', stdout=subprocess.PIPE, stdin=subprocess.PIPE, shell=True, preexec_fn=os.setsid,cwd=cwd))
