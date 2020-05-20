@@ -25,21 +25,24 @@ def searchDistance(img, bot_name):
 			for i in range(0,len(coord)):
 				distance_teste = math.sqrt(((origin[0] - coord[i][0][0])**2)+((origin[1] - coord[i][0][1])**2))
 				if distance > distance_teste:
-					click_point = coord[i][0]
+					result_point = coord[i][0]
 					distance = distance_teste
-			logging.info('Ended processing in : {} - distance : {}'.format(time.time() - start_time, distance))
+
+			click_point = []
+			for i in range(0,len(result_point)):
+				click_point.append(result_point[i].item())
+
+			logging.info('{} ended processing in : {} - distance : {}'.format(bot_name, time.time() - start_time, distance))
 			for machine in machines:
 				if machine['bot_name'] == bot_name:
 					vnc_port = machine['vnc_port']
 					qemu_port = machine['qemu_port']
-					click_point = checkClick(click_point)
-					if checkClick(click_point) is not None:
-						click(vnc_port, qemu_port, click_point[0], click_point[1])
-						if distance > 120:
-							time.sleep(2.5)
-						else:
-							time.sleep(1.5)
-						machine['last_attack'] = time.time()
+					click(vnc_port, qemu_port, click_point[0], click_point[1])
+					if distance > 120:
+						time.sleep(2.5)
+					else:
+						time.sleep(1.5)
+					machine['last_attack'] = time.time()
 		else:
 			for machine in machines:
 				if machine['bot_name'] == bot_name:
@@ -49,7 +52,7 @@ def searchDistance(img, bot_name):
 						subprocess.call('/bin/su -c "/home/eduardo/Projects/ragnarok/env/env2.7/bin/vncdotool -t 0.5 -s localhost:{} key f2" - eduardo'.format(vnc_port), shell=True)
 						machine['last_attack'] = time.time()
 	except Exception as e:
-		pass
+		logging.info(e)
 
 def checkWings(image, bot_name):
 	logging.info('Started the process of checking wings on {}'.format(bot_name))
@@ -82,7 +85,9 @@ def checkWings(image, bot_name):
 	logging.info('Relogin on {}'.format(bot_name))
 	script_file('relog', bot_name)
 	logging.info('Relogin on Robot.Merchant')
+	time.sleep(5)
 	script_file('relog', 'Robot.Merchant')
+	time.sleep(5)
 	script_file('send_wings', 'Robot.Merchant', request=bot_name)
 	logging.info('Sended wings to {}'.format(bot_name))
 	time.sleep(5)
@@ -115,11 +120,14 @@ def script_file(script_name, bot_name, request = ''):
 			subprocess.call('echo {}|nc -N 127.0.0.1 {} > /dev/null 2'.format(command_string, qemu_port), shell=True)
 			time.sleep(0.2)
 		elif command_type[0] == 'click':
-			click(vnc_port, qemu_port, command_type[1], command_type[2][:-1])
+			click(vnc_port, qemu_port, int(command_type[1]), int(command_type[2][:-1]), True)
+			time.sleep(0.2)
 		elif command_type[0] == 'drag':
-			drag(vnc_port, qemu_port, command_type[1], command_type[2], command_type[3], command_type[4][:-1])
+			drag(vnc_port, qemu_port, int(command_type[1]), int(command_type[2]), int(command_type[3]), int(command_type[4][:-1]))
+			time.sleep(0.2)
 		elif command_type[0] == 'double_click':
-			doubleclick(vnc_port, qemu_port, command_type[1], command_type[2][:-1])
+			doubleclick(vnc_port, qemu_port, int(command_type[1]), int(command_type[2][:-1]))
+			time.sleep(0.2)
 		elif command_type[0]:
 			if '{' in command_type[1]:
 				if command_type[1][1:-2] == 'bot_user':
@@ -131,21 +139,22 @@ def script_file(script_name, bot_name, request = ''):
 			else:
 				command_string = ' '.join(command_type)[:-1]
 			normalCommand(vnc_port, qemu_port, command_string)
-			
+			time.sleep(0.2)
+
 
 def telegramNotification(image):
 	token = open('credentials/telegramToken')
 	bot = telegram.Bot(token=token.readline())
 	bot.send_photo(chat_id=507188149, photo=open('{}'.format(image), 'rb'))
 
-def checkClick(click_point):    
-	#Menu and player infosm with cash shop icon
+def checkClick(click_point):  
+	#Menu and player info and cash shop icon
 	if click_point[1] <= 90:
-			return 0
+			return None
 	#Map options
 	if click_point[1] <= 185 and click_point[1] >= 160:
 		if click_point[0] <= 785 and click_point[0] >= 655:
-			return 0
+			return None
 
 	if click_point[0] >= 430:
 		click_point[0] = click_point[0] + 10
@@ -154,26 +163,36 @@ def checkClick(click_point):
 
 	if click_point[1] >= 345:
 			click_point[1] = click_point[1] + 20
-	if click_point[1] <= 225:
+	if click_point[1] <= 225 and click_point[1] - 20 >= 90:
 		click_point[1] = click_point[1] - 20
 
 	if click_point[0] > 0 and click_point[1] > 0:
 		return click_point
-	
-	return 0
+		
+	return None
 
 
-def click(vnc_port, qemu_port, x, y):
+def click(vnc_port, qemu_port, x, y, script = False):
+	result_code = subprocess.call('/bin/su -c "/home/eduardo/Projects/ragnarok/env/env2.7/bin/vncdotool -t 1 -s localhost:{} move {} {} click 1" - eduardo'.format(vnc_port , 0, 0), shell=True)
+	logging.info('Click {} {}'.format(x,y))
+	if not script:
+		result = checkClick([x, y])
+		if result is not None:
+			x, y = result
+		else:
+			logging.info('Trying to click on blocked position - {} {}'.format(x,y))
+			return 0
 	result_code = subprocess.call('/bin/su -c "/home/eduardo/Projects/ragnarok/env/env2.7/bin/vncdotool -t 1 -s localhost:{} move {} {}" - eduardo'.format(vnc_port , x, y), shell=True)
 	while result_code:
+		logging.info('error with x: {} y: {}'.format(x, y))
 		time.sleep(0.5)
 		result_code = subprocess.call('/bin/su -c "/home/eduardo/Projects/ragnarok/env/env2.7/bin/vncdotool -t 1 -s localhost:{} move {} {}" - eduardo'.format(vnc_port , x, y), shell=True)
-	time.sleep(0.1)
 	subprocess.call('echo mouse_button {}|nc -N 127.0.0.1 {} > /dev/null 2'.format(1, qemu_port), shell=True)
 	time.sleep(0.1)
 	subprocess.call('echo mouse_button {}|nc -N 127.0.0.1 {} > /dev/null 2'.format(0, qemu_port), shell=True)
 
 def drag(vnc_port, qemu_port, x_start, y_start, x_end, y_end):
+	logging.info('Drag {} {} {} {}'.format(x_start, y_start, x_end, y_end))
 	result_code = subprocess.call('/bin/su -c "/home/eduardo/Projects/ragnarok/env/env2.7/bin/vncdotool -t 1 -s localhost:{} move {} {}" - eduardo'.format(vnc_port, x_start, y_start), shell=True)
 	time.sleep(0.2)
 	while result_code:
@@ -189,6 +208,7 @@ def drag(vnc_port, qemu_port, x_start, y_start, x_end, y_end):
 	subprocess.call('echo mouse_button {}|nc -N 127.0.0.1 {} > /dev/null 2'.format(0, qemu_port),shell=True)
 
 def normalCommand(vnc_port, qemu_port, command):
+	logging.info('Normal {}'.format(command))
 	result_code = subprocess.call('/bin/su -c "/home/eduardo/Projects/ragnarok/env/env2.7/bin/vncdotool -t 1 -s localhost:{} {}" - eduardo'.format(vnc_port, command),shell=True)
 	time.sleep(0.2)
 	while result_code:
@@ -196,6 +216,7 @@ def normalCommand(vnc_port, qemu_port, command):
 		result_code = subprocess.call('/bin/su -c "/home/eduardo/Projects/ragnarok/env/env2.7/bin/vncdotool -t 1 -s localhost:{} {}" - eduardo'.format(vnc_port, command),shell=True)
 
 def doubleclick(vnc_port, qemu_port, x, y):
+	logging.info('DoubleClick {} {}'.format(x,y))
 	result_code = subprocess.call('/bin/su -c "/home/eduardo/Projects/ragnarok/env/env2.7/bin/vncdotool -t 1 -s localhost:{} move {} {}" - eduardo'.format(vnc_port , x, y), shell=True)
 	time.sleep(0.2)
 	while result_code:

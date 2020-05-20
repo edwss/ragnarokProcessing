@@ -20,8 +20,8 @@ wait 5
 sendkey kp_enter
 wait 5
 click 400 482
-wait 0.5
+wait 1
 sendkey alt-tab 500
-wait 0.5
+wait 1
 sendkey alt-tab 500
-wait 3
+wait 1

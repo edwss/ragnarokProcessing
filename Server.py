@@ -27,7 +27,7 @@ def main():
 				if machine['name'] == machine_name:
 					bot_name = machine['bot_name']
 					machine['frame'] = image
-					if time.time() > machine['elapsed_time'] + 360:
+					if time.time() > machine['elapsed_time'] + 180:
 						#Thread to search for fly wing
 						if machine['wings_thread'].is_alive():
 							pass
